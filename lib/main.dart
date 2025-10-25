@@ -30,7 +30,7 @@ class _MindfulnessAppState extends State<MindfulnessApp> {
       title: 'CalmSpace',
       theme: ThemeData(
         primaryColor: Colors.purple[100],
-        scaffoldBackgroundColor: Color(0xFFE6E6FA)
+        scaffoldBackgroundColor: Color(0xFFE6E6FA),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
         ),
