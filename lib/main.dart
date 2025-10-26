@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
+
+// ✅ Make sure these imports all match your actual file names & folders
 import 'screens/home_screen.dart';
 import 'screens/affirmation_screen.dart';
 import 'screens/mood_tracker_screen.dart';
 import 'screens/journal_screen.dart';
+import 'screens/breathing_screen.dart';
 
 void main() {
-  runApp(MindfulnessApp());
+  runApp(const CalmSpaceApp());
 }
 
-class MindfulnessApp extends StatefulWidget {
+class CalmSpaceApp extends StatefulWidget {
+  const CalmSpaceApp({Key? key}) : super(key: key);
+
   @override
-  _MindfulnessAppState createState() => _MindfulnessAppState();
+  _CalmSpaceAppState createState() => _CalmSpaceAppState();
 }
 
-class _MindfulnessAppState extends State<MindfulnessApp> {
+class _CalmSpaceAppState extends State<CalmSpaceApp> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
+  // 🌸 All your app screens in order
+  final List<Widget> _screens = const [
     HomeScreen(),
     AffirmationScreen(),
     MoodTrackerScreen(),
     JournalScreen(),
+    BreathingScreen(), // 🫁 guided breathing tab
   ];
 
   @override
@@ -29,8 +36,10 @@ class _MindfulnessAppState extends State<MindfulnessApp> {
       debugShowCheckedModeBanner: false,
       title: 'CalmSpace',
       theme: ThemeData(
-        primaryColor: Colors.purple[100],
-        scaffoldBackgroundColor: Color(0xFFE6E6FA),
+        useMaterial3: true,
+        fontFamily: 'Impact', // Apply Impact to all text
+        primarySwatch: Colors.purple,
+        scaffoldBackgroundColor: const Color(0xFFE6E6FA), // lavender base
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
         ),
@@ -38,8 +47,12 @@ class _MindfulnessAppState extends State<MindfulnessApp> {
       home: Scaffold(
         body: _screens[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,
           onTap: (index) => setState(() => _selectedIndex = index),
+          selectedItemColor: Colors.purple,
+          unselectedItemColor: Colors.grey,
+          backgroundColor: const Color(0xFFEDE7F6), // light purple
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
@@ -48,9 +61,11 @@ class _MindfulnessAppState extends State<MindfulnessApp> {
             ),
             BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Mood'),
             BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Journal'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.air),
+              label: 'Breathing', // 🫁 new breathing tab
+            ),
           ],
-          selectedItemColor: Colors.purple,
-          unselectedItemColor: Colors.grey,
         ),
       ),
     );
