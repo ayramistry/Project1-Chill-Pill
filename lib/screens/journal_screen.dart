@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'dart:math' as math;
+import 'package:intl/intl.dart'; // 🌸 for AM/PM time format
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({Key? key}) : super(key: key);
@@ -7,55 +13,475 @@ class JournalScreen extends StatefulWidget {
   State<JournalScreen> createState() => _JournalScreenState();
 }
 
-class _JournalScreenState extends State<JournalScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final List<String> _entries = [];
+class _JournalScreenState extends State<JournalScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _float1;
+  late Animation<double> _float2;
+  late Animation<double> _float3;
 
-  void _saveEntry() {
-    if (_controller.text.trim().isEmpty) return;
-    setState(() {
-      _entries.add(_controller.text);
-      _controller.clear();
-    });
+  List<Map<String, dynamic>> _entries = [];
+  final TextEditingController _entryController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _initAnimations();
+    _loadEntries();
   }
+
+  void _initAnimations() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6),
+    )..repeat(reverse: true);
+
+    _float1 = Tween<double>(
+      begin: 0,
+      end: 20,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _float2 = Tween<double>(begin: 0, end: 15).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
+    );
+    _float3 = Tween<double>(begin: 0, end: 25).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+    );
+  }
+
+  Future<void> _loadEntries() async {
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getString('journalEntries');
+    if (stored != null) {
+      setState(() {
+        _entries = List<Map<String, dynamic>>.from(json.decode(stored));
+        _entries.sort(
+          (a, b) =>
+              DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])),
+        );
+      });
+    }
+  }
+
+  Future<void> _saveEntries() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('journalEntries', json.encode(_entries));
+  }
+
+  void _addEntry() {
+    if (_entryController.text.trim().isEmpty ||
+        _titleController.text.trim().isEmpty)
+      return;
+
+    final newEntry = {
+      'title': _titleController.text.trim(),
+      'content': _entryController.text.trim(),
+      'date': DateTime.now().toIso8601String(),
+    };
+
+    setState(() {
+      _entries.insert(0, newEntry);
+    });
+
+    _saveEntries();
+    _entryController.clear();
+    _titleController.clear();
+    Navigator.pop(context);
+  }
+
+  void _openNewEntryDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFFFDE1EB),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25),
+        side: const BorderSide(color: Color(0xFFF7A4C3), width: 3),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "New Journal Entry",
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    labelText: "Title",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _entryController,
+                  maxLines: 6,
+                  decoration: const InputDecoration(
+                    labelText: "Write your thoughts...",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _addEntry,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF7A4C3),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: Text(
+                    "Save Entry",
+                    style: GoogleFonts.poppins(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _openEntryView(Map<String, dynamic> entry) {
+    showDialog(
+      context: context,
+      builder: (context) => _TypingEntryDialog(entry: entry),
+    );
+  }
+
+  String _formatDate(String iso) {
+    final date = DateTime.parse(iso);
+    final formatter = DateFormat('MM/dd/yyyy  hh:mm a'); // 🌸 AM/PM format
+    return formatter.format(date);
+  }
+
+  Widget _buildCircle(double size, Color color) => Container(
+    height: size,
+    width: size,
+    decoration: BoxDecoration(
+      color: color,
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+          color: color.withOpacity(0.25),
+          blurRadius: 6,
+          spreadRadius: 0.5,
+        ),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Journal")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller,
-              maxLines: 4,
-              decoration: const InputDecoration(
-                hintText: "Write your thoughts here...",
-                border: OutlineInputBorder(),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          // 🌸 Gradient background
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFFED4E7), Color(0xFFF8EFFF)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _saveEntry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple[200],
+          ),
+
+          // 🌕 Floating dots background (matches home)
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  Positioned(
+                    top: 180 + _float1.value,
+                    left: 50,
+                    child: _buildCircle(
+                      45,
+                      Colors.purple.shade100.withOpacity(0.3),
+                    ),
+                  ),
+                  Positioned(
+                    top: 230 - _float2.value,
+                    right: 40,
+                    child: _buildCircle(
+                      60,
+                      Colors.purple.shade200.withOpacity(0.3),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 260 + _float3.value,
+                    left: 70,
+                    child: _buildCircle(35, Colors.white.withOpacity(0.3)),
+                  ),
+                  Positioned(
+                    top: 160 - _float1.value / 2,
+                    left: 90,
+                    child: _buildCircle(
+                      15,
+                      Colors.purple.shade100.withOpacity(0.25),
+                    ),
+                  ),
+                  Positioned(
+                    top: 260 + _float2.value / 3,
+                    right: 90,
+                    child: _buildCircle(
+                      10,
+                      Colors.purple.shade200.withOpacity(0.2),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 300 + _float3.value / 2,
+                    left: 100,
+                    child: _buildCircle(10, Colors.white.withOpacity(0.25)),
+                  ),
+                  Positioned(
+                    bottom: 320 - _float1.value / 3,
+                    right: 130,
+                    child: _buildCircle(
+                      14,
+                      Colors.purple.shade100.withOpacity(0.2),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+
+          // 🟣 Purple curved background
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.22,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.85,
+              decoration: const BoxDecoration(
+                color: Color(0xFF7C4DFF),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(120),
+                  topRight: Radius.circular(120),
+                ),
               ),
-              child: const Text("Save Entry"),
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _entries.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(title: Text(_entries[index])),
-                  );
-                },
+          ),
+
+          // 📝 Journal content
+          SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                Text(
+                  "My Journal",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Add button
+                GestureDetector(
+                  onTap: _openNewEntryDialog,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF7A4C3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Add New Entry",
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+
+                Expanded(
+                  child: _entries.isEmpty
+                      ? Center(
+                          child: Text(
+                            "No entries (yet...)",
+                            style: GoogleFonts.nunito(
+                              fontSize: 18,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: ListView.builder(
+                            itemCount: _entries.length,
+                            itemBuilder: (context, index) {
+                              final entry = _entries[index];
+                              return GestureDetector(
+                                onTap: () => _openEntryView(entry),
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  padding: const EdgeInsets.all(18),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.8),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.purple.shade200,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        entry['title'],
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        _formatDate(entry['date']),
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 14,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// 🌷 Typing animation dialog
+class _TypingEntryDialog extends StatefulWidget {
+  final Map<String, dynamic> entry;
+  const _TypingEntryDialog({required this.entry});
+
+  @override
+  State<_TypingEntryDialog> createState() => _TypingEntryDialogState();
+}
+
+class _TypingEntryDialogState extends State<_TypingEntryDialog> {
+  String displayedText = "";
+  int index = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTypingAnimation();
+  }
+
+  void _startTypingAnimation() {
+    final fullText = widget.entry['content'];
+    _timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
+      if (index < fullText.length) {
+        setState(() {
+          displayedText += fullText[index];
+          index++;
+        });
+      } else {
+        _timer?.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: const Color(0xFFFDE1EB),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFFF7A4C3), width: 3),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.entry['title'],
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                DateFormat(
+                  'MM/dd/yyyy  hh:mm a',
+                ).format(DateTime.parse(widget.entry['date'])),
+                style: GoogleFonts.nunito(fontSize: 14, color: Colors.black54),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                displayedText,
+                style: GoogleFonts.nunito(
+                  fontSize: 16,
+                  height: 1.4,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
