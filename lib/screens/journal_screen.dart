@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:intl/intl.dart'; // 🌸 for AM/PM time format
+import 'package:intl/intl.dart';
+import 'calm_home_page.dart'; // 👈 for navigation back
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({Key? key}) : super(key: key);
@@ -37,16 +38,12 @@ class _JournalScreenState extends State<JournalScreen>
       duration: const Duration(seconds: 6),
     )..repeat(reverse: true);
 
-    _float1 = Tween<double>(
-      begin: 0,
-      end: 20,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-    _float2 = Tween<double>(begin: 0, end: 15).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
-    );
-    _float3 = Tween<double>(begin: 0, end: 25).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
-    );
+    _float1 = Tween<double>(begin: 0, end: 20)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _float2 = Tween<double>(begin: 0, end: 15)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine));
+    _float3 = Tween<double>(begin: 0, end: 25)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
   }
 
   Future<void> _loadEntries() async {
@@ -55,10 +52,8 @@ class _JournalScreenState extends State<JournalScreen>
     if (stored != null) {
       setState(() {
         _entries = List<Map<String, dynamic>>.from(json.decode(stored));
-        _entries.sort(
-          (a, b) =>
-              DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])),
-        );
+        _entries.sort((a, b) =>
+            DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
       });
     }
   }
@@ -70,8 +65,7 @@ class _JournalScreenState extends State<JournalScreen>
 
   void _addEntry() {
     if (_entryController.text.trim().isEmpty ||
-        _titleController.text.trim().isEmpty)
-      return;
+        _titleController.text.trim().isEmpty) return;
 
     final newEntry = {
       'title': _titleController.text.trim(),
@@ -145,9 +139,7 @@ class _JournalScreenState extends State<JournalScreen>
                       borderRadius: BorderRadius.circular(20),
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 12,
-                    ),
+                        horizontal: 30, vertical: 12),
                   ),
                   child: Text(
                     "Save Entry",
@@ -171,25 +163,25 @@ class _JournalScreenState extends State<JournalScreen>
 
   String _formatDate(String iso) {
     final date = DateTime.parse(iso);
-    final formatter = DateFormat('MM/dd/yyyy  hh:mm a'); // 🌸 AM/PM format
+    final formatter = DateFormat('MM/dd/yyyy  hh:mm a');
     return formatter.format(date);
   }
 
   Widget _buildCircle(double size, Color color) => Container(
-    height: size,
-    width: size,
-    decoration: BoxDecoration(
-      color: color,
-      shape: BoxShape.circle,
-      boxShadow: [
-        BoxShadow(
-          color: color.withOpacity(0.25),
-          blurRadius: 6,
-          spreadRadius: 0.5,
+        height: size,
+        width: size,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.25),
+              blurRadius: 6,
+              spreadRadius: 0.5,
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +200,20 @@ class _JournalScreenState extends State<JournalScreen>
             ),
           ),
 
-          // 🌕 Floating dots background (matches home)
+          // ⬅️ Back button
+          Positioned(
+            top: 50,
+            left: 20,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xFF7C4DFF), size: 28),
+              onPressed: () {
+                Navigator.of(context).pop(); // 👈 Go back to CalmHomePage
+              },
+            ),
+          ),
+
+          // 🌕 Floating dots
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -235,41 +240,12 @@ class _JournalScreenState extends State<JournalScreen>
                     left: 70,
                     child: _buildCircle(35, Colors.white.withOpacity(0.3)),
                   ),
-                  Positioned(
-                    top: 160 - _float1.value / 2,
-                    left: 90,
-                    child: _buildCircle(
-                      15,
-                      Colors.purple.shade100.withOpacity(0.25),
-                    ),
-                  ),
-                  Positioned(
-                    top: 260 + _float2.value / 3,
-                    right: 90,
-                    child: _buildCircle(
-                      10,
-                      Colors.purple.shade200.withOpacity(0.2),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 300 + _float3.value / 2,
-                    left: 100,
-                    child: _buildCircle(10, Colors.white.withOpacity(0.25)),
-                  ),
-                  Positioned(
-                    bottom: 320 - _float1.value / 3,
-                    right: 130,
-                    child: _buildCircle(
-                      14,
-                      Colors.purple.shade100.withOpacity(0.2),
-                    ),
-                  ),
                 ],
               );
             },
           ),
 
-          // 🟣 Purple curved background
+          // 💜 Purple curved background
           Positioned(
             top: MediaQuery.of(context).size.height * 0.22,
             left: 0,
@@ -302,7 +278,6 @@ class _JournalScreenState extends State<JournalScreen>
                 ),
                 const SizedBox(height: 20),
 
-                // Add button
                 GestureDetector(
                   onTap: _openNewEntryDialog,
                   child: Row(
@@ -315,11 +290,7 @@ class _JournalScreenState extends State<JournalScreen>
                           color: Color(0xFFF7A4C3),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        child: const Icon(Icons.add, color: Colors.white, size: 20),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -466,9 +437,8 @@ class _TypingEntryDialogState extends State<_TypingEntryDialog> {
               ),
               const SizedBox(height: 8),
               Text(
-                DateFormat(
-                  'MM/dd/yyyy  hh:mm a',
-                ).format(DateTime.parse(widget.entry['date'])),
+                DateFormat('MM/dd/yyyy  hh:mm a')
+                    .format(DateTime.parse(widget.entry['date'])),
                 style: GoogleFonts.nunito(fontSize: 14, color: Colors.black54),
               ),
               const SizedBox(height: 12),

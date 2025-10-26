@@ -6,6 +6,7 @@ import 'breathing_screen.dart';
 import 'journal_screen.dart';
 import 'affirmation_screen.dart';
 import 'mood_tracker_screen.dart';
+import 'home_screen.dart'; // 👈 added import for navigation back to main home
 
 //
 // 🌸 1️⃣ Name input screen
@@ -44,6 +45,28 @@ class _NextScreenState extends State<NextScreen> {
                 colors: [Color(0xFFFED4E7), Color(0xFFF8EFFF)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+
+          // ⬅️ Back Button to Home
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xFF7C4DFF),
+                  size: 26,
+                ),
+                onPressed: () {
+                  // 👇 Go all the way back to HomeScreen
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    (route) => false,
+                  );
+                },
               ),
             ),
           ),
@@ -224,31 +247,6 @@ class FeaturesOverviewScreen extends StatelessWidget {
                           page: feature['page'],
                         );
                       },
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF7A4C3),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: Text(
-                    "Back",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

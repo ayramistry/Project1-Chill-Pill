@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home_screen.dart'; // for WavePageRoute transition
 import 'affirmation_screen.dart';
 import 'mood_tracker_screen.dart';
 import 'journal_screen.dart';
+import 'next_screen.dart'; // for the name input screen
 
 class CalmHomePage extends StatelessWidget {
   const CalmHomePage({super.key});
@@ -35,70 +35,116 @@ class CalmHomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8EFFF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'CalmSpace',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
+      body: Stack(
+        children: [
+          // background
+          Positioned.fill(
+            child: Container(color: const Color(0xFFF8EFFF)),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: GridView.builder(
-          itemCount: features.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
-          ),
-          itemBuilder: (context, index) {
-            final item = features[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
-                  WavePageRoute(page: item['page']),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.purple.shade100.withOpacity(0.4),
-                      blurRadius: 10,
-                      offset: const Offset(2, 5),
+
+          // ✅ Always-visible back button (top-left)
+          SafeArea(
+            child: Positioned(
+              top: 8,
+              left: 8,
+              child: Material(
+                color: Colors.white,
+                elevation: 2,
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => const NextScreen()),
+                      );
+                    }
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color(0xFF7C4DFF),
+                      size: 22,
                     ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(item['icon'], color: const Color(0xFF7C4DFF), size: 40),
-                    const SizedBox(height: 14),
-                    Text(
-                      item['title'],
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+
+          // Title
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Text(
+                  'CalmSpace',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 22,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Grid
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 70, 20, 30),
+            child: GridView.builder(
+              itemCount: features.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20,
+              ),
+              itemBuilder: (context, index) {
+                final item = features[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => item['page']),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.purple.shade100.withOpacity(0.4),
+                          blurRadius: 10,
+                          offset: const Offset(2, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(item['icon'],
+                            color: const Color(0xFF7C4DFF), size: 40),
+                        const SizedBox(height: 14),
+                        Text(
+                          item['title'],
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -126,3 +172,4 @@ class PlaceholderPage extends StatelessWidget {
     );
   }
 }
+

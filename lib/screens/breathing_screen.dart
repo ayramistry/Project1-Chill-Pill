@@ -19,6 +19,8 @@ class _BreathingScreenState extends State<BreathingScreen>
   String _phaseText = "Breathe In...";
   int _countdown = 4;
 
+  bool _showInfo = true; // 👈 controls the info panel visibility
+
   @override
   void initState() {
     super.initState();
@@ -108,7 +110,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           return Stack(
             alignment: Alignment.center,
             children: [
-              // 🌸 Background gradient
+              // 🌸 Gradient background
               Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -118,6 +120,86 @@ class _BreathingScreenState extends State<BreathingScreen>
                   ),
                 ),
               ),
+
+              // ⬅️ Back Button
+              Positioned(
+                top: 50,
+                left: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                      color: Color(0xFF7C4DFF), size: 28),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+
+              // 🌿 Info panel
+              if (_showInfo)
+                Positioned(
+                  top: 100,
+                  left: 20,
+                  right: 20,
+                  child: AnimatedOpacity(
+                    opacity: _showInfo ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 400),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.purple.shade100.withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(2, 4),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 40.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "✨ About Box Breathing",
+                                  style: TextStyle(
+                                    fontFamily: 'Impact',
+                                    fontSize: 22,
+                                    color: Color(0xFF7C4DFF),
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  "Deep, slow breathing helps calm your nervous system, reduce stress, and improve focus. "
+                                  "Follow the circle’s rhythm: inhale, hold, and exhale. "
+                                  "You can close this message when you’re ready to begin.",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black87,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () => setState(() => _showInfo = false),
+                              child: const Icon(
+                                Icons.close_rounded,
+                                color: Colors.black54,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
 
               // 🌕 Floating dots
               Positioned(
@@ -141,24 +223,8 @@ class _BreathingScreenState extends State<BreathingScreen>
                 left: 70,
                 child: _buildCircle(35, Colors.white.withOpacity(0.3)),
               ),
-              Positioned(
-                top: 160 - _float1.value / 2,
-                left: 90,
-                child: _buildCircle(
-                  15,
-                  Colors.purple.shade100.withOpacity(0.25),
-                ),
-              ),
-              Positioned(
-                top: 260 + _float2.value / 3,
-                right: 90,
-                child: _buildCircle(
-                  10,
-                  Colors.purple.shade200.withOpacity(0.2),
-                ),
-              ),
 
-              // 🌊 Unique purple wave block for Breathing screen
+              // 🌊 Purple wave at bottom
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -172,13 +238,12 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ),
               ),
 
-              // 🌼 Breathing circle and text
+              // 🌼 Breathing circle
               Center(
                 child: AnimatedBuilder(
                   animation: _scaleAnimation,
                   builder: (context, _) {
                     final scale = _scaleAnimation.value;
-
                     final glowColor = Color.lerp(
                       const Color(0xFF7CB06D),
                       const Color(0xFFE27429),
@@ -241,34 +306,27 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 }
 
-// 🩵 Custom purple "breathing wave" shape (unique curve)
+// 🌊 Purple breathing wave clipper
 class BreathingWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
     path.lineTo(0, size.height * 0.35);
-
-    // first curve (gentle rise)
     path.quadraticBezierTo(
       size.width * 0.25,
       size.height * 0.25,
       size.width * 0.5,
       size.height * 0.32,
     );
-
-    // second curve (smooth dip)
     path.quadraticBezierTo(
       size.width * 0.75,
       size.height * 0.38,
       size.width,
       size.height * 0.28,
     );
-
-    // close bottom
     path.lineTo(size.width, size.height);
     path.lineTo(0, size.height);
     path.close();
-
     return path;
   }
 
@@ -276,20 +334,18 @@ class BreathingWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// 🌈 Breathing circle gradient (green → purple → orange)
+// 🌈 Breathing circle gradient
 class _GradientCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-
     final paint = Paint()
       ..shader = const RadialGradient(
         colors: [Color(0xFF7CB06D), Color(0xFF9E9EE8), Color(0xFFE27429)],
         stops: [0.2, 0.6, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.fill;
-
     canvas.drawCircle(center, radius - 4, paint);
   }
 
@@ -297,6 +353,7 @@ class _GradientCirclePainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
+// 🌬 Breath phase data class
 class _BreathPhase {
   final String text;
   final int duration;
