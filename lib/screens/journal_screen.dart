@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:intl/intl.dart';
-import 'calm_home_page.dart'; // for back navigation
+import 'calm_home_page.dart'; 
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({Key? key}) : super(key: key);
@@ -226,7 +226,7 @@ class _JournalScreenState extends State<JournalScreen>
             ),
           ),
 
-          // ⬅️ Back button
+
           Positioned(
             top: 50,
             left: 20,
@@ -239,7 +239,7 @@ class _JournalScreenState extends State<JournalScreen>
             ),
           ),
 
-          // ☁️ Rain toggle button
+
           Positioned(
             top: 50,
             right: 20,
@@ -254,7 +254,7 @@ class _JournalScreenState extends State<JournalScreen>
             ),
           ),
 
-          // 🌕 Floating dots
+     
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -286,7 +286,7 @@ class _JournalScreenState extends State<JournalScreen>
             },
           ),
 
-          // 💜 Purple curved background
+      
           Positioned(
             top: MediaQuery.of(context).size.height * 0.22,
             left: 0,
@@ -303,7 +303,7 @@ class _JournalScreenState extends State<JournalScreen>
             ),
           ),
 
-          // 📝 Journal content
+       
           SafeArea(
             child: Column(
               children: [

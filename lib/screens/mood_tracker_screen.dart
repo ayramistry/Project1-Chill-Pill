@@ -85,7 +85,7 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen>
       _moodEntries.add(MoodEntry(mood: _selectedMood!, date: DateTime.now()));
     });
 
-    _saveToPrefs(); // ✅ store after every new entry
+    _saveToPrefs(); 
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -123,7 +123,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen>
                 ),
               ),
 
-              // ⬅️ Back Button (same as Breathing Screen)
               Positioned(
                 top: 50,
                 left: 20,
@@ -139,7 +138,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen>
                 ),
               ),
 
-              // ✨ Floating glow orbs
               Positioned(
                 top: 150 + _float1.value,
                 left: 40,
@@ -156,7 +154,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen>
                 child: _buildCircle(50, Colors.white.withOpacity(0.25)),
               ),
 
-              // 🌿 Content
               SafeArea(
                 child: Center(
                   child: Padding(
@@ -220,7 +217,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen>
 
                         const SizedBox(height: 40),
 
-                        // 💾 Save Button
                         ElevatedButton(
                           onPressed: _saveMood,
                           style: ElevatedButton.styleFrom(
@@ -245,7 +241,6 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen>
 
                         const SizedBox(height: 40),
 
-                        // 🗓 Mood history
                         Expanded(
                           child: _moodEntries.isEmpty
                               ? const Text(

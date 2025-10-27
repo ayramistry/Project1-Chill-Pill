@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
 
-          // 🌕 Floating dots (animated)
+//floatung circle
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen>
             },
           ),
 
-          // 🟣 Purple block under girl
+
           Positioned(
             top: MediaQuery.of(context).size.height * 0.39,
             left: 0,
@@ -137,9 +137,9 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
 
-          // 💗 Pink wave under girl
+
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.50, // adjust as needed
+            top: MediaQuery.of(context).size.height * 0.50, 
             left: 0,
             right: 0,
             child: ClipPath(
@@ -151,13 +151,13 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
 
-          // 🧘 Girl illustration
+
           Positioned(
             top: MediaQuery.of(context).size.height * 0.18,
             child: Image.asset('assets/girl.png', height: 320),
           ),
 
-          // ✨ Text and button
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -240,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen>
   );
 }
 
-// 🌊 Wave transition (kept clean)
+
 class WavePageRoute extends PageRouteBuilder {
   final Widget page;
 
@@ -251,7 +251,7 @@ class WavePageRoute extends PageRouteBuilder {
         pageBuilder: (context, animation, secondaryAnimation) => page,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           if (animation.status == AnimationStatus.dismissed) {
-            return child; // ✅ no pink streak before transition
+            return child; 
           }
 
           final curved = CurvedAnimation(

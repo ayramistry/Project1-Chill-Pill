@@ -55,7 +55,6 @@ class _AffirmationScreenState extends State<AffirmationScreen>
 
           return Stack(
             children: [
-              // 🌸 Gradient background
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -66,7 +65,7 @@ class _AffirmationScreenState extends State<AffirmationScreen>
                 ),
               ),
 
-              // ⬅️ Back Button (matches BreathingScreen)
+
               Positioned(
                 top: 50,
                 left: 20,
@@ -82,7 +81,7 @@ class _AffirmationScreenState extends State<AffirmationScreen>
                 ),
               ),
 
-              // ✨ Floating glow orbs
+
               Positioned(
                 top: 120 + math.sin(_floatController.value * math.pi) * 15,
                 left: 50,
@@ -99,7 +98,7 @@ class _AffirmationScreenState extends State<AffirmationScreen>
                 child: _glowOrb(60, Colors.white.withOpacity(0.25)),
               ),
 
-              // 🌿 Content
+         
               SafeArea(
                 child: Center(
                   child: Padding(
@@ -107,7 +106,6 @@ class _AffirmationScreenState extends State<AffirmationScreen>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // 💬 Quote with fade/scale animation
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 800),
                           transitionBuilder: (child, anim) => FadeTransition(
@@ -129,7 +127,7 @@ class _AffirmationScreenState extends State<AffirmationScreen>
                         ),
                         const SizedBox(height: 50),
 
-                        // 🌸 Button
+
                         ElevatedButton(
                           onPressed: _nextQuote,
                           style: ElevatedButton.styleFrom(
@@ -163,7 +161,7 @@ class _AffirmationScreenState extends State<AffirmationScreen>
     );
   }
 
-  // 🌕 Soft glow circle
+
   Widget _glowOrb(double size, Color color) {
     return Container(
       width: size,

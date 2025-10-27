@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// ✅ Import your real feature pages
+//Import real feature pages
 import 'breathing_screen.dart';
 import 'journal_screen.dart';
 import 'affirmation_screen.dart';
 import 'mood_tracker_screen.dart';
-import 'home_screen.dart'; // 👈 added import for navigation back to main home
+import 'home_screen.dart'; 
 
-//
-// 🌸 1️⃣ Name input screen
-//
+
+
+
 class NextScreen extends StatefulWidget {
   const NextScreen({super.key});
 
@@ -38,7 +38,7 @@ class _NextScreenState extends State<NextScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // 🌸 Gradient background
+          //Gradient background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -49,7 +49,6 @@ class _NextScreenState extends State<NextScreen> {
             ),
           ),
 
-          // ⬅️ Back Button to Home
           SafeArea(
             child: Align(
               alignment: Alignment.topLeft,
@@ -60,7 +59,6 @@ class _NextScreenState extends State<NextScreen> {
                   size: 26,
                 ),
                 onPressed: () {
-                  // 👇 Go all the way back to HomeScreen
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -71,7 +69,6 @@ class _NextScreenState extends State<NextScreen> {
             ),
           ),
 
-          // 💬 Input section
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28.0),
@@ -151,9 +148,7 @@ class _NextScreenState extends State<NextScreen> {
   }
 }
 
-//
-// 🌷 2️⃣ Personalized features overview
-//
+
 class FeaturesOverviewScreen extends StatelessWidget {
   final String userName;
   const FeaturesOverviewScreen({super.key, required this.userName});
@@ -190,7 +185,6 @@ class FeaturesOverviewScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 🌸 Background gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -201,7 +195,6 @@ class FeaturesOverviewScreen extends StatelessWidget {
             ),
           ),
 
-          // 🌿 Content
           SafeArea(
             child: Column(
               children: [
@@ -224,7 +217,6 @@ class FeaturesOverviewScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 35),
 
-                // 🩷 Grid of features
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -236,7 +228,7 @@ class FeaturesOverviewScreen extends StatelessWidget {
                             crossAxisCount: 2,
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 1.05, // fit 4 on one page
+                            childAspectRatio: 1.05, 
                           ),
                       itemBuilder: (context, index) {
                         final feature = features[index];
@@ -260,9 +252,7 @@ class FeaturesOverviewScreen extends StatelessWidget {
   }
 }
 
-//
-// 💗 Feature Card Widget
-//
+
 class _FeatureCard extends StatelessWidget {
   final String title;
   final IconData icon;

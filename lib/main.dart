@@ -17,13 +17,13 @@ class CalmSpaceApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Impact',
         primarySwatch: Colors.purple,
-        scaffoldBackgroundColor: const Color(0xFFE6E6FA), // lavender base
+        scaffoldBackgroundColor: const Color(0xFFE6E6FA),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
         ),
       ),
 
-      // 👇 Start directly at your animated HomeScreen
+
       home: const HomeScreen(),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'calm_home_page.dart';
-import 'home_screen.dart'; // for the WavePageRoute animation
+import 'home_screen.dart'; 
 
 class TutorialPage extends StatelessWidget {
   const TutorialPage({super.key});
@@ -13,7 +13,6 @@ class TutorialPage extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // ⬅️ Back Button (top-left)
             Positioned(
               top: 20,
               left: 20,
@@ -24,12 +23,11 @@ class TutorialPage extends StatelessWidget {
                   size: 26,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop(); // go back to name screen
+                  Navigator.of(context).pop(); 
                 },
               ),
             ),
 
-            // 🌸 Main content
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
@@ -37,7 +35,6 @@ class TutorialPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 80),
 
-                  // 🧘 Title
                   Text(
                     "How CalmSpace Works 🌿",
                     textAlign: TextAlign.center,
@@ -50,7 +47,6 @@ class TutorialPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // 📖 Description
                   Text(
                     "Here’s a quick guide to help you get started! Each day you’ll explore small, mindful moments — "
                     "like checking in on your mood, writing short reflections, or reading affirmations that boost your peace of mind.",
@@ -64,7 +60,6 @@ class TutorialPage extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // 🪷 Feature list
                   Expanded(
                     child: ListView(
                       children: [
@@ -94,7 +89,7 @@ class TutorialPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // 🚀 Continue Button
+                
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(

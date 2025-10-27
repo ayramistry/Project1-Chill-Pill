@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'affirmation_screen.dart';
 import 'mood_tracker_screen.dart';
 import 'journal_screen.dart';
-import 'next_screen.dart'; // for the name input screen
+import 'next_screen.dart'; 
 
 class CalmHomePage extends StatelessWidget {
   const CalmHomePage({super.key});
@@ -42,7 +42,7 @@ class CalmHomePage extends StatelessWidget {
             child: Container(color: const Color(0xFFF8EFFF)),
           ),
 
-          // ✅ Always-visible back button (top-left)
+
           SafeArea(
             child: Positioned(
               top: 8,
@@ -150,7 +150,6 @@ class CalmHomePage extends StatelessWidget {
   }
 }
 
-/// Temporary placeholder until you make the real Mindfulness page
 class PlaceholderPage extends StatelessWidget {
   final String title;
   const PlaceholderPage({super.key, required this.title});

@@ -19,7 +19,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   String _phaseText = "Breathe In...";
   int _countdown = 4;
 
-  bool _showInfo = true; // 👈 controls the info panel visibility
+  bool _showInfo = true; 
 
   @override
   void initState() {
@@ -110,7 +110,6 @@ class _BreathingScreenState extends State<BreathingScreen>
           return Stack(
             alignment: Alignment.center,
             children: [
-              // 🌸 Gradient background
               Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -121,7 +120,6 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ),
               ),
 
-              // ⬅️ Back Button
               Positioned(
                 top: 50,
                 left: 20,
@@ -132,7 +130,6 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ),
               ),
 
-              // 🌿 Info panel
               if (_showInfo)
                 Positioned(
                   top: 100,
@@ -201,7 +198,6 @@ class _BreathingScreenState extends State<BreathingScreen>
                   ),
                 ),
 
-              // 🌕 Floating dots
               Positioned(
                 top: 180 + _float1.value,
                 left: 50,
@@ -224,7 +220,6 @@ class _BreathingScreenState extends State<BreathingScreen>
                 child: _buildCircle(35, Colors.white.withOpacity(0.3)),
               ),
 
-              // 🌊 Purple wave at bottom
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -238,7 +233,6 @@ class _BreathingScreenState extends State<BreathingScreen>
                 ),
               ),
 
-              // 🌼 Breathing circle
               Center(
                 child: AnimatedBuilder(
                   animation: _scaleAnimation,
@@ -306,7 +300,6 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 }
 
-// 🌊 Purple breathing wave clipper
 class BreathingWaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -334,7 +327,6 @@ class BreathingWaveClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-// 🌈 Breathing circle gradient
 class _GradientCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -353,7 +345,7 @@ class _GradientCirclePainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
-// 🌬 Breath phase data class
+
 class _BreathPhase {
   final String text;
   final int duration;
