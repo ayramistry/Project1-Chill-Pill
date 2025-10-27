@@ -12,7 +12,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1   # ✅ added for text styling
   shared_preferences: ^2.2.3 
-  intl: ^0.19.0 
+  intl: ^0.19.0
+  audioplayers: ^6.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +27,4 @@ flutter:
   # ✅ Added your image asset here
   assets:
     - assets/girl.png
+    - assets/rain_sound.mp3

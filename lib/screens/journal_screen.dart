@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:intl/intl.dart';
-import 'calm_home_page.dart'; // 👈 for navigation back
+import 'calm_home_page.dart'; // for back navigation
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({Key? key}) : super(key: key);
@@ -25,11 +26,16 @@ class _JournalScreenState extends State<JournalScreen>
   final TextEditingController _entryController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
 
+  late AudioPlayer _audioPlayer;
+  bool _isRainPlaying = false;
+  double _volume = 0.5;
+
   @override
   void initState() {
     super.initState();
     _initAnimations();
     _loadEntries();
+    _audioPlayer = AudioPlayer();
   }
 
   void _initAnimations() {
@@ -61,6 +67,19 @@ class _JournalScreenState extends State<JournalScreen>
   Future<void> _saveEntries() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('journalEntries', json.encode(_entries));
+  }
+
+  Future<void> _toggleRainSound() async {
+    if (_isRainPlaying) {
+      await _audioPlayer.stop();
+    } else {
+      await _audioPlayer.play(AssetSource('rain_sound.mp3'));
+      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
+      await _audioPlayer.setVolume(_volume);
+    }
+    setState(() {
+      _isRainPlaying = !_isRainPlaying;
+    });
   }
 
   void _addEntry() {
@@ -138,8 +157,8 @@ class _JournalScreenState extends State<JournalScreen>
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 12),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   ),
                   child: Text(
                     "Save Entry",
@@ -184,6 +203,13 @@ class _JournalScreenState extends State<JournalScreen>
       );
 
   @override
+  void dispose() {
+    _audioPlayer.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -208,8 +234,23 @@ class _JournalScreenState extends State<JournalScreen>
               icon: const Icon(Icons.arrow_back_ios_new_rounded,
                   color: Color(0xFF7C4DFF), size: 28),
               onPressed: () {
-                Navigator.of(context).pop(); // 👈 Go back to CalmHomePage
+                Navigator.of(context).pop();
               },
+            ),
+          ),
+
+          // ☁️ Rain toggle button
+          Positioned(
+            top: 50,
+            right: 20,
+            child: IconButton(
+              icon: Icon(
+                _isRainPlaying ? Icons.cloud_off : Icons.cloud_queue,
+                color: const Color(0xFF7C4DFF),
+                size: 30,
+              ),
+              onPressed: _toggleRainSound,
+              tooltip: _isRainPlaying ? "Stop Rain" : "Play Rain",
             ),
           ),
 
@@ -278,6 +319,25 @@ class _JournalScreenState extends State<JournalScreen>
                 ),
                 const SizedBox(height: 20),
 
+                // Volume control slider (only visible when playing)
+                if (_isRainPlaying)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Slider(
+                      value: _volume,
+                      min: 0,
+                      max: 1,
+                      divisions: 10,
+                      activeColor: const Color(0xFF7C4DFF),
+                      inactiveColor: Colors.purple.shade100,
+                      label: "Volume",
+                      onChanged: (value) {
+                        setState(() => _volume = value);
+                        _audioPlayer.setVolume(value);
+                      },
+                    ),
+                  ),
+
                 GestureDetector(
                   onTap: _openNewEntryDialog,
                   child: Row(
@@ -290,7 +350,8 @@ class _JournalScreenState extends State<JournalScreen>
                           color: Color(0xFFF7A4C3),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.add, color: Colors.white, size: 20),
+                        child:
+                            const Icon(Icons.add, color: Colors.white, size: 20),
                       ),
                       const SizedBox(width: 8),
                       Text(
